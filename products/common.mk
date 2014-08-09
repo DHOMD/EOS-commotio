@@ -160,7 +160,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     audio_effects.conf \
     Basic \
-    libemoji
+    libemoji \
     Music \
     VideoEditor \
     VoiceDialer \
