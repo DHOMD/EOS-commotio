@@ -15,11 +15,11 @@ $(call inherit-product, vendor/vanir/proprietary/ringtones/VanirRingtones.mk)
 PRODUCT_PACKAGES += \
     busybox \
     Email \
-    Launcher3 \
-    OmniSwitch
+    Launcher3
 
-#    PerformanceControl \
-#    VanirUpdater
+ifeq ($(strip $(BOARD_DISABLE_LAUNCHER3)),)
+PRODUCT_PACKAGES += Trebuchet
+endif
 
 # Build Properties
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -91,6 +91,27 @@ PRODUCT_COPY_FILES += \
     vendor/vanir/proprietary/common/media/LMprec_508.emd:system/media/LMprec_508.emd \
     vendor/vanir/proprietary/common/media/PFFprec_600.emd:system/media/PFFprec_600.emd
 
+# Enable SIP+VoIP on all targets
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml
+
+# Don't export PS1 in /system/etc/mkshrc.
+PRODUCT_COPY_FILES += \
+    vendor/eos/prebuilt/common/etc/mkshrc:system/etc/mkshrc
+
+# PlayStation
+PRODUCT_PACKAGES += \
+    com.playstation.playstationcertified
+
+PRODUCT_COPY_FILES +=  \
+    vendor/eos/prebuilt/common/etc/permissions/com.playstation.playstationcertified.xml:system/etc/permissions/com.playstation.playstationcertified.xml
+
+# Supersu support
+PRODUCT_COPY_FILES += \
+    vendor/eos/prebuilt/common/etc/init.d/99SuperSUDaemon:system/etc/init.d/99SuperSUDaemon \
+    vendor/eos/prebuilt/common/xbin/daemonsu:system/xbin/daemonsu \
+    vendor/eos/prebuilt/common/xbin/su:system/xbin/su
+
 # entropy mumbo jump
 PRODUCT_COPY_FILES += \
     vendor/vanir/proprietary/common/xbin/CB_RunHaveged:system/xbin/CB_RunHaveged \
@@ -123,29 +144,32 @@ PRODUCT_COPY_FILES += \
     vendor/vanir/proprietary/common/bin/whitelist:system/addon.d/whitelist
 endif
 
-#Define thirdparty for Koush's SU
-SUPERUSER_EMBEDDED := true
-SUPERUSER_PACKAGE_PREFIX := com.android.settings.vanir.superuser
-
-# Required CM packages
+# Required eos packages
 PRODUCT_PACKAGES += \
+    BluetoothExt \
     Camera \
+    EOSTools \
+    EOSWeather \
+    DSPManager\
+    Email \
     LatinIME \
-    Superuser \
-    su \
-    BluetoothExt
+    Launcher2 \
+    libcyanogen-dsp
+
+# Optional eos packages
+PRODUCT_PACKAGES += \
+    audio_effects.conf \
+    Basic \
+    libemoji
+    Music \
+    VideoEditor \
+    VoiceDialer \
+    SoundRecorder
 
 # CM Hardware Abstraction Framework
 PRODUCT_PACKAGES += \
     org.cyanogenmod.hardware \
     org.cyanogenmod.hardware.xml
-
-# Optional CM packages
-PRODUCT_PACKAGES += \
-    Basic \
-    Development \
-    SoundRecorder \
-    libemoji
 
 PRODUCT_PACKAGES += \
     VideoEditor \
@@ -154,6 +178,11 @@ PRODUCT_PACKAGES += \
     libvideoeditor_osal \
     libvideoeditor_videofilters \
     libvideoeditorplayer
+
+# msim video tele
+PRODUCT_PACKAGES += \
+    libimscamera_jni \
+    libvt_jni
 
 # Stagefright FFMPEG plugin
 PRODUCT_PACKAGES += \
@@ -202,16 +231,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     rsync
 
-# Theme engine
-PRODUCT_PACKAGES += \
-    ThemeChooser \
-    ThemesProvider \
-    Vanir_Inverted
-
-PRODUCT_COPY_FILES += \
-    vendor/vanir/config/permissions/com.tmobile.software.themes.xml:system/etc/permissions/com.tmobile.software.themes.xml \
-    vendor/vanir/config/permissions/org.cyanogenmod.theme.xml:system/etc/permissions/org.cyanogenmod.theme.xml
-
 ## STREAMING DMESG?
 PRODUCT_PACKAGES += \
     klogripper
@@ -224,8 +243,14 @@ PRODUCT_COPY_FILES += \
     vendor/vanir/proprietary/common/etc/init.d/0000kernelassimilator:system/etc/init.d/0000kernelassimilator \
     vendor/vanir/proprietary/common/etc/kernelassimilator.d/00bootclasspath:system/etc/kernelassimilator.d/00bootclasspath
 
-# Allow installing apps that require cm permissions from the play store 
-include vendor/cyngn/product.mk
+PRODUCT_PACKAGE_OVERLAYS += vendor/eos/overlay/common
 
 $(call inherit-product-if-exists, vendor/vanir-private/Private.mk)
+
+# T-Mobile Theme Engine
+$(call inherit-product, vendor/eos/config/themes_common.mk)
+
+# Open Source prebuilts
+$(call inherit-product, vendor/eos/config/prebuilt_apps_common.mk)
+
 

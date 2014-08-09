@@ -9,11 +9,6 @@ PRODUCT_COPY_FILES += \
     vendor/vanir/proprietary/common/etc/spn-conf.xml:system/etc/spn-conf.xml
 
 PRODUCT_PACKAGES += \
-    SpeakerProximity \
     CellBroadcastReceiver \
     Mms \
-    Stk \
-    Torch
-
-# Audio Packages
-include frameworks/base/data/sounds/AudioPackage7.mk
+    Stk
