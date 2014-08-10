@@ -122,11 +122,6 @@ class EdifyGenerator(object):
         self.script.append('delete("/system/bin/backuptool.sh");')
         self.script.append('delete("/system/bin/backuptool.functions");')
 
-  def RunConfig(self, command):
-    self.script.append('package_extract_file("system/bin/modelid_cfg.sh", "/tmp/modelid_cfg.sh");')
-    self.script.append('set_perm(0, 0, 0777, "/tmp/modelid_cfg.sh");')
-    self.script.append(('run_program("/tmp/modelid_cfg.sh", "%s");' % command))
-
   def ShowProgress(self, frac, dur):
     """Update the progress bar, advancing it over 'frac' over the next
     'dur' seconds.  'dur' may be zero to advance it via SetProgress
@@ -167,8 +162,8 @@ class EdifyGenerator(object):
     if fstab:
       p = fstab[mount_point]
       if p.fs_type == 'f2fs':
-        self.script.append('run_program("/sbin/mount", "-t", "auto", "%s", "%s");' %
-                           (p.device, p.mount_point))
+        self.script.append('run_program("/sbin/busybox", "mount", "%s");' %
+                           (p.mount_point))
       else:
         self.script.append('mount("%s", "%s", "%s", "%s");' %
                            (p.fs_type, common.PARTITION_TYPES[p.fs_type],
